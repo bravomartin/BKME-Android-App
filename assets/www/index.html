@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width; user-scalable=no" />
+
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>#BKME</title>
+
+        <script type="text/javascript" charset="utf-8" src="js/libs/jquery-1.6.4.min"></script>
+        <script type="text/javascript" charset="utf-8" src="js/libs/jquery.mobile-1.0.1.min.js"></script>
+         <!-- <link rel="stylesheet" type="text/css" href="js/libs/jquery.mobile-1.0.1.min.css">  -->
+        <script type="text/javascript" charset="utf-8" src="js/libs/phonegap-1.3.0.js"></script>
+    
+    <script type="text/javascript" charset="utf-8" src="js/bkme.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/app.css">
+
+  </head>
+  <body onload="onLoad()" id="stage" class="theme">
+    <div id="messages">
+        <div class="status" id="geo">getting geolocation...</div>
+        <div class="instruction" id="get">tap anywhere to get the camera.</div>
+        <div class="warning"></div>
+        <div class="error"></div>
+
+    </div><!-- closing #messages -->
+    <div id="app">
+      <div id="welcome">
+            <img class="logo" src="img/BKME_logo.png" />
+      </div>
+      <div id="photoview">
+        <img alt="photo" id="photo"/>
+      </div>
+    </div> <!-- closing #app -->
+  </body>
+</html>
