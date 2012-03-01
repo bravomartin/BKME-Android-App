@@ -1,0 +1,19 @@
+{
+	"jsDir": "js", // This is a relative path to where your JS files live
+	"cssDir": "css", // This is a relative path to where your CSS files live
+	"sourceDir": "src", // This is the name of the dir inside jsDir and cssDir where your source files will live.
+	"buildDir": "", // This is the name of the dir inside jsDir and cssDir where your built files will live.
+	"bundles": { // List each bundle in here like so...
+		"app.js": [
+			"libs/jquery.mobile-1.0.1.min.js",
+			"libs/jQueryRotate.2.1.js",
+			"libs/phonegap-1.3.0.js"//,
+			//"bkme.js"
+		],
+		"app.css": [
+			//"libs/jquery.mobile-1.0.1.min.css",
+			"libs/bootstrap.less",
+			"app.less"
+		]
+	}
+}
