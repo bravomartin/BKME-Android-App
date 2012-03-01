@@ -102,7 +102,9 @@ function displayPhoto(){
 	var $photo = $('#photoview > #photo');
 	$photo.attr( 'src', bkme.data.image);
 	$photo.rotate(90);
-	$photo.width(bkme.deviceInfo.width);
+	$photo.width(bkme.deviceInfo.height);
+	$photo.css({'margin-top': -, 'margin-left' : -bkme.deviceInfo.width/3});
+
 	// $photo.css('margin-left', -($photo.width()/2) );
 
 	$('#photoview').show();
@@ -111,15 +113,16 @@ function displayPhoto(){
 	if(bkme.data.geolocation.valid){
 		$('#photoview > #geolocation').html(bkme.data.geolocation.lat+","+bkme.data.geolocation.lon);
 	}
-
+	//sendReports();
 		
 }
 
 
 function sendReports(){
 	showMessage( $('#sending'), 3000 );
+	vibrate();
 	var reset = setTimeout(function(){welcome();}, 5000);
-
+	
 }
 
 function onBackButton() {
@@ -164,6 +167,7 @@ var onPhotoFail = function(message) {
 		showMessage( $('.error') );
 	bkme.flags.onCamera = false;
 	console.log('offCamera');
+	welcome();
 
 
 };

@@ -1,3 +1,9 @@
+@font-face{
+ font-family: AvantGarde; 
+ src: url('fonts/itcavantgardestd-md-webfont.ttf') format('truetype');
+}
+
+
 @background : #ffffff;
 @red : #ff0000;
 @green : #50C960;
@@ -9,8 +15,9 @@ body {
 	background: @background;
 	margin:0;
 	padding:0;
-	font-family: Helvetica;
-	font-size:20px;
+	font-family: AvantGarde, Helvetica, 'Droid Sans', Sans-Serif;
+	font-size:18px;
+	text-transform:uppercase;
 }
 
 .message-shadow(@color : black) {

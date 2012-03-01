@@ -217,12 +217,17 @@
 #reset .reset-html5 section {
   display: block;
 }
+@font-face {
+  font-family: AvantGarde;
+  src: url('fonts/itcavantgardestd-md-webfont.ttf') format('truetype');
+}
 body {
   background: #ffffff;
   margin: 0;
   padding: 0;
-  font-family: Helvetica;
-  font-size: 20px;
+  font-family: AvantGarde, Helvetica, 'Droid Sans', Sans-Serif;
+  font-size: 18px;
+  text-transform: uppercase;
 }
 #messages {
   text-align: center;
