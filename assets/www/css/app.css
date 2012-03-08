@@ -289,6 +289,12 @@ body {
 #app #photoview #geolocation {
   position: absolute;
   z-index: 10;
-  bottom: 0;
-  color: red;
+  bottom: 5px;
+  color: white;
+  text-align: center;
+  -webkit-text-shadow: 1px 1px 1px #000000;
+  -moz-text-shadow: 1px 1px 1px #000000;
+  text-shadow: 1px 1px 1px #000000;
+  background: transparent;
+  text-align: center;
 }

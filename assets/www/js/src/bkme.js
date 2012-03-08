@@ -8,11 +8,8 @@ var bkme = {
 	'data' : {
 		'geolocation' : {},
 		'image' : null,
-		'connectionType' : null
-
-	},
-	'fn' : {
-
+		'connectionType' : null,
+		'timestamp' : null
 
 	}
 
@@ -68,13 +65,11 @@ function init(){
 function offlineMode () {
 	if (!bkme.flags.connection) {
 		if (!bkme.flags.offlineMode){
-			$('.warning').html("Offline mode.");
+			$('.warning').html("Offline mode. GETS will be sent when online.");
 			$('.warning').slideDown();
 			bkme.flags.offlineMode = true;
 		}
-		setTimeout(function(){
-			checkConnection();
-		}, 120000);
+		setTimeout(function(){checkConnection();}, 120000);
 	} else {
 		$('.warning').slideUp();
 		bkme.flags.offlineMode = false;
@@ -85,14 +80,14 @@ function offlineMode () {
 
 function welcome(){
 	$('#app').children().hide();
-		$('#welcome').show();
-		checkLocation();
+	$('#welcome').show();
+	checkLocation();
 
-		$('#get').slideDown();
-		$('#welcome').tap(function(){
-			console.log('tap!');
-			startCamera();
-		});
+	$('#get').slideDown();
+	$('#welcome').tap(function(){
+		console.log('tap!');
+		startCamera();
+	});
 }
 
 
@@ -101,28 +96,50 @@ function displayPhoto(){
 	$('#app').children().hide();
 	var $photo = $('#photoview > #photo');
 	$photo.attr( 'src', bkme.data.image);
-	$photo.rotate(90);
-	$photo.width(bkme.deviceInfo.height);
-	$photo.css({'margin-top': -, 'margin-left' : -bkme.deviceInfo.width/3});
 
-	// $photo.css('margin-left', -($photo.width()/2) );
+	//img width doesn't work for base64 images! need to change to file images.
+	var pWidth = $photo.width(),
+		pHeight = $photo.height(),
+		dWidth = bkme.deviceInfo.width,
+		dHeight = bkme.deviceInfo.height;
 
+	if (1.3 > 1 ) {
+		$photo.width(dHeight);
+		pWidth = dHeight;
+		pHeight = dHeight/4*3;
+		$photo.css({'margin-top': (dHeight/2 - pHeight/2), 'margin-left' : (dWidth/2 - pWidth/2) });
+		$photo.rotate(90);
+	} else {
+		$photo.height(dHeight);
+		pWidth = $photo.width();
+		pHeight = $photo.height();
+		$photo.css({'margin-top': (dHeight/2 - pHeight/2), 'margin-left' : (dWidth/2 - pWidth/2) });
+	}
+	
 	$('#photoview').show();
-	//store the data in the database.
-	//send the data!
+	
+}
+function displayGeo(){
 	if(bkme.data.geolocation.valid){
 		$('#photoview > #geolocation').html(bkme.data.geolocation.lat+","+bkme.data.geolocation.lon);
+	} else {
+		setTimeout(function(){displayGeo();}, 1000);
 	}
-	//sendReports();
 		
 }
 
-
-function sendReports(){
+function sendData(){
 	showMessage( $('#sending'), 3000 );
 	vibrate();
-	var reset = setTimeout(function(){welcome();}, 5000);
-	
+	sendJSON();
+//	setTimeout(function(){welcome();}, 5000);
+}
+
+function getCurrentTime(){
+	//get current time
+	var currentTime = new Date();
+	bkme.data.timestamp = JSON.stringify(currentTime);
+	console.log('current time: ', bkme.data.timestamp);
 }
 
 function onBackButton() {
@@ -134,17 +151,43 @@ function onBackButton() {
 
 function showMessage(m, wait){
 	wait = wait || 1500;
-	m.slideDown().delay(wait).slideUp();
+	if (wait === 0 ){
+		m.slideDown();
+	} else {
+		m.slideDown().delay(wait).slideUp();
+	}
 }
 
 
 //camera
 var startCamera = function(){
-	bkme.flags.onCamera = true;
 	console.log('onCamera');
+	bkme.flags.onCamera = true;
+
+	var success = function(imageData) {
+		console.log('onPhotoSucess()');
+		bkme.data.image = "data:image/jpeg;base64," + imageData;
+		bkme.flags.onCamera = false;
+		console.log('offCamera');
+		displayPhoto();
+		displayGeo();
+		sendData();
+};
+
+	var fail = function(message) {
+		$('.error').html(message);
+		showMessage( $('.error') );
+		vibrate();
+		bkme.flags.onCamera = false;
+		console.log('offCamera');
+		welcome();
+};
+
+
+
 	navigator.camera.getPicture(
-		onPhotoSuccess,
-		onPhotoFail,
+		success,
+		fail,
 		{ quality: 50,
 		allowEdit : true,
 		targetWidth: 1000,
@@ -152,25 +195,7 @@ var startCamera = function(){
 		});
 };
 
-var onPhotoSuccess = function(imageData) {
-		console.log('onPhotoSucess()');
-		bkme.data.image = "data:image/jpeg;base64," + imageData;
-		bkme.flags.onCamera = false;
-		console.log('offCamera');
-		displayPhoto();
 
-
-};
-
-var onPhotoFail = function(message) {
-	$('.error').html(message);
-		showMessage( $('.error') );
-	bkme.flags.onCamera = false;
-	console.log('offCamera');
-	welcome();
-
-
-};
 
 
 //geolocation
@@ -185,15 +210,12 @@ var checkLocation = function() {
 			'accuracy' : p.coords.accuracy,
 			'valid' : true
 		};
-
+		console.log('time:', new Date());
 		for(var d in bkme.data.geolocation){
 			console.log(d + ' : ' + bkme.data.geolocation[d]);
 		}
-		var obsolete = setTimeout(
-			function() {
-				obsoleteGeo();
-			},
-			90000);
+		var obsolete = setTimeout(function() { obsoleteGeo();},
+			60000);
 		var loc =	'location found: ' +
 					bkme.data.geolocation.lat +
 					',' +
@@ -208,9 +230,12 @@ var checkLocation = function() {
 	var fail = function(error) {
 
 		bkme.flags.gettingLocation = false;
+		bkme.data.geolocation.valid = false;
+
+
 		bkme.data.geolocation = {};
 
-        switch (error.code) {
+		switch (error.code) {
 
 		case error.POSITION_UNAVAILABLE:
 			$('.error').html("Could not detect current position.");
@@ -290,3 +315,69 @@ var deviceInfo = function() {
 		console.log(p + ' : ' + bkme.deviceInfo[p]);
 	}
 };
+
+
+
+
+
+function xinspect(o,i){
+    if(typeof i=='undefined')i='';
+    if(i.length>50)return '[MAX ITERATIONS]';
+    var r=[];
+    for(var p in o){
+        var t=typeof o[p];
+        r.push(i+'"'+p+'" ('+t+') => '+(t=='object' ? 'object:'+xinspect(o[p],i+'  ') : o[p]+''));
+    }
+    return r.join(i+'\n');
+}
+
+
+var sendJSON = function() {
+	console.log("sendJSON()");
+
+	var success = function(data) {
+		vibrate();
+		vibrate();
+
+		// $('#app').children().hide();
+		// $('#photoview').html(xinspect(data));
+		// $('#photoview').show();
+
+		console.log('data received!');
+		console.log(xinspect(data));
+		$('#sending').slideUp();
+		$('#sent').html("GET sent!");
+		showMessage($('#sent'));
+	};
+
+	var fail = function(data) {
+		console.log("error!");
+		$('.error').html("Connection to server failed.");
+		showMessage($('.error'));
+		// unpack the results to see what's going on
+		if (data) {
+			for (var d in data) {
+				console.log(d + ": " + data[d]);
+			}
+		}
+
+	};
+
+	console.log("submitting: ", bkme.data);
+	$.ajax({
+		type : 'POST',
+		url : 'http://bkmedev.heroku.com/receive/',
+		dataType : 'json',
+		data : bkme.data,
+		success : function(data) {
+			success(data);
+		},
+		error : function(data) {
+			fail(data);
+		}
+	});
+	console.log("data sent");
+};
+
+
+

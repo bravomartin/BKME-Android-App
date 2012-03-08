@@ -1,0 +1,54 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Page title</title>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/src/libs/jQueryRotate.2.1.js"></script>
+
+
+    <script>
+	$(window).load(function() {
+    var $photo = $('img');
+	var pWidth = $photo.width(),
+		pHeight = $photo.height(),
+		dWidth = $(window).width(),
+		dHeight = $(window).height();
+		console.log(pWidth, pHeight, dWidth, dHeight);
+
+		if (pWidth/pHeight > 1 ) {
+			$photo.width(dHeight);
+			pWidth = $photo.width();
+			pHeight = $photo.height();
+			$photo.css({'margin-top': (dHeight/2 - pHeight/2), 'margin-left' : (dWidth/2 - pWidth/2) });
+			$photo.rotate(90);
+		} else {
+			$photo.height(dHeight);
+			pWidth = $photo.width();
+			pHeight = $photo.height();
+			$photo.css({'margin-top': (dHeight/2 - pHeight/2), 'margin-left' : (dWidth/2 - pWidth/2) });
+		}
+
+
+
+    });
+
+
+    </script>
+
+
+
+  </head>
+  <body style="margin:0; padding:0;">
+
+
+  	<img src="http://images.pictureshunt.com/pics/c/cartoon_popeye-5344.jpg" />
+
+  	<!-- <img src="http://images.pictureshunt.com/pics/b/black_and_white_popeye-5348.jpg" /> -->
+
+  </body>
+</html>
+
+
+

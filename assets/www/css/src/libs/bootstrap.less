@@ -136,6 +136,12 @@
   -moz-box-shadow: @shadow, @shadow2;
   box-shadow: @shadow, @shadow2;
 }
+.text-shadow (@shadow : 1px 1px 1px #000 ){
+  -webkit-text-shadow: @shadow;
+  -moz-text-shadow: @shadow;
+  text-shadow: @shadow;
+
+}
 // rotation
 .rotate(@angle : 90deg) { 
    transform: rotate(@angle);
